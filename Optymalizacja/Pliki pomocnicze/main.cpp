@@ -22,7 +22,7 @@ int main()
 {
 	try
 	{
-		lab0();
+		lab1();
 	}
 	catch (string EX_INFO)
 	{
@@ -68,16 +68,14 @@ void lab0()
 
 void lab1()
 {
-	double epsilon = 1e-2;
 	int Nmax = 100;
 	double alpha = 1.5;
 	double alpha2 = 3;
-	double alpha2 = 5.5;
-	double d = 0.5;     // Pocz¹tkowy krok
-	matrix lb(2, 1, -5), ub(2, 1, 5), a(2, 1);
-	a(0) = -1;
-	a(1) = 2;
-
+	double alpha3 = 5.5;
+	double x0 = 70.0;
+	double d = 0.5;
+	double* exp = expansion(ff1T, x0, d, alpha, Nmax);
+	cout << "Ekspansja = " << exp << endl << endl;
 }
 
 void lab2()
