@@ -75,7 +75,7 @@ void lab1()
 	double x0 = 70.0;
 	double d = 0.5;
 	double* exp = expansion(ff1T, x0, d, alpha, Nmax);
-	cout << "Ekspansja = " << exp << endl << endl;
+	cout << "Ekspansja przedzia³ = [" << exp[0] << "; " << exp[1] << "]" << endl << endl;
 }
 
 void lab2()
