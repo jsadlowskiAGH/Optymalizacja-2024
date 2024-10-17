@@ -30,19 +30,20 @@ solution MC(matrix(*ff)(matrix, matrix, matrix), int N, matrix lb, matrix ub, do
 	}
 }
 
-double* expansion(matrix(*ff)(matrix, matrix, matrix), double x0, double d, double alpha, int Nmax, matrix ud1, matrix ud2)
+solution expansion(matrix(*ff)(matrix, matrix, matrix), double x0, double d, double alpha, int Nmax, matrix ud1, matrix ud2)
 {
 	try
 	{
-		double* p = new double[2] { 0, 0 };
+		solution interval;
+		interval.x = matrix(2, 1);
 		int i = 0;
 		double x1 = x0 + d;
 
 		if (ff(x1, ud1, ud2) == ff(x0, ud1, ud2))
 		{
-			p[0] = x0;
-			p[1] = x1;
-			return p;
+			interval.x(0, 0) = x0;
+			interval.x(1, 0) = x1;
+			return interval;
 		}
 
 		if (ff(x1, ud1, ud2) > ff(x0, ud1, ud2))
@@ -51,9 +52,9 @@ double* expansion(matrix(*ff)(matrix, matrix, matrix), double x0, double d, doub
 			x1 = x0 + d;
 			if (ff(x1, ud1, ud2) >= ff(x0, ud1, ud2))
 			{
-				p[0] = x1;
-				p[1] = x0 - d;
-				return p;
+				interval.x(0, 0) = x1;
+				interval.x(1, 0) = x0 - d;
+				return interval;
 			}
 		}
 
@@ -63,26 +64,27 @@ double* expansion(matrix(*ff)(matrix, matrix, matrix), double x0, double d, doub
 
 			i++;
 			double xi = x0 + pow(alpha, i) * d;
+
 			if (ff(x0 + pow(alpha, i - 1) * d, ud1, ud2) <= ff(xi, ud1, ud2))
 				break;
 		}
 
 		if (d > 0)
 		{
-			p[0] = x0 + pow(alpha, i - 2) * d;
-			p[1] = x0 + pow(alpha, i + 1) * d;
+			interval.x(0, 0) = x0 + pow(alpha, i - 2) * d;
+			interval.x(1, 0) = x0 + pow(alpha, i + 1) * d;
 		}
 		else
 		{
-			p[0] = x0 + pow(alpha, i + 1) * d;
-			p[1] = x0 + pow(alpha, i - 2) * d;
+			interval.x(0, 0) = x0 + pow(alpha, i + 1) * d;
+			interval.x(1, 0) = x0 + pow(alpha, i - 2) * d;
 		}
 
-		return p;
+		return interval;
 	}
 	catch (string ex_info)
 	{
-		throw ("double* expansion(...):\n" + ex_info);
+		throw ("solution expansion(...):\n" + ex_info);
 	}
 }
 
