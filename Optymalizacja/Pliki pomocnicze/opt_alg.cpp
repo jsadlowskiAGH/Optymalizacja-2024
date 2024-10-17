@@ -57,27 +57,29 @@ solution expansion(matrix(*ff)(matrix, matrix, matrix), double x0, double d, dou
 				return interval;
 			}
 		}
-
+		double xpre;
 		while (true)
 		{
 			if (i >= Nmax) throw "Maximum number of function calls exceeded";
 
 			i++;
-			double xi = x0 + pow(alpha, i) * d;
+			xpre = x0;
+			x0 = x1;
+			x1 = x0 + pow(alpha, i) * d;
 
-			if (ff(x0 + pow(alpha, i - 1) * d, ud1, ud2) <= ff(xi, ud1, ud2))
+			if (ff(x0 + pow(alpha, i - 1) * d, ud1, ud2) <= ff(x1, ud1, ud2))
 				break;
 		}
 
 		if (d > 0)
 		{
-			interval.x(0, 0) = x0 + pow(alpha, i - 2) * d;
-			interval.x(1, 0) = x0 + pow(alpha, i + 1) * d;
+			interval.x(0, 0) = xpre;
+			interval.x(1, 0) = x1;
 		}
 		else
 		{
-			interval.x(0, 0) = x0 + pow(alpha, i + 1) * d;
-			interval.x(1, 0) = x0 + pow(alpha, i - 2) * d;
+			interval.x(0, 0) = x1;
+			interval.x(1, 0) = xpre;
 		}
 
 		return interval;
