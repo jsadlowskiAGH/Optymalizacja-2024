@@ -56,19 +56,27 @@ double* expansion(matrix(*ff)(matrix, matrix, matrix), double x0, double d, doub
 				return p;
 			}
 		}
-
+		double xPre, xi=x0;
 		while (true)
 		{
 			if (i >= Nmax) throw "Maximum number of function calls exceeded";
 
 			i++;
+<<<<<<< Updated upstream
 			double xi = x0 + pow(alpha, i) * d;
+=======
+			xPre = x0;
+			x0 = xi;
+			xi = x0 + pow(alpha, i) * d;
+			
+>>>>>>> Stashed changes
 			if (ff(x0 + pow(alpha, i - 1) * d, ud1, ud2) <= ff(xi, ud1, ud2))
 				break;
 		}
 
 		if (d > 0)
 		{
+<<<<<<< Updated upstream
 			p[0] = x0 + pow(alpha, i - 2) * d;
 			p[1] = x0 + pow(alpha, i + 1) * d;
 		}
@@ -76,6 +84,15 @@ double* expansion(matrix(*ff)(matrix, matrix, matrix), double x0, double d, doub
 		{
 			p[0] = x0 + pow(alpha, i + 1) * d;
 			p[1] = x0 + pow(alpha, i - 2) * d;
+=======
+			interval.x(0, 0) = xPre;
+			interval.x(1, 0) = xi;
+		}
+		else
+		{
+			interval.x(0, 0) = x0 + xi;
+			interval.x(1, 0) = x0 + xPre;
+>>>>>>> Stashed changes
 		}
 
 		return p;
