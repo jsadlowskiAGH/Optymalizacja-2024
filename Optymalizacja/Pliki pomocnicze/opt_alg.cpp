@@ -63,7 +63,7 @@ solution expansion(matrix(*ff)(matrix, matrix, matrix), double x0, double d, dou
 			if (i >= Nmax) throw "Maximum number of function calls exceeded";
 
 			i++;
-<<<<<<< Updated upstream
+
 			double xi = x0 + pow(alpha, i) * d;
 			if (ff(x0 + pow(alpha, i - 1) * d, ud1, ud2) <= ff(xi, ud1, ud2))
 				break;
@@ -71,13 +71,13 @@ solution expansion(matrix(*ff)(matrix, matrix, matrix), double x0, double d, dou
 
 		if (d > 0)
 		{
-			p[0] = x0 + pow(alpha, i - 2) * d;
-			p[1] = x0 + pow(alpha, i + 1) * d;
+			interval.x(0, 0) = x0 + pow(alpha, i - 2) * d;
+			interval.x(1, 0) = x0 + pow(alpha, i + 1) * d;
 		}
 		else
 		{
-			p[0] = x0 + pow(alpha, i + 1) * d;
-			p[1] = x0 + pow(alpha, i - 2) * d;
+			interval.x(0, 0) = x0 + pow(alpha, i + 1) * d;
+			interval.x(1, 0) = x0 + pow(alpha, i - 2) * d;
 		}
 
 		return interval;
