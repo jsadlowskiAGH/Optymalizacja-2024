@@ -1,4 +1,4 @@
-#include"opt_alg.h"
+﻿#include"opt_alg.h"
 
 solution MC(matrix(*ff)(matrix, matrix, matrix), int N, matrix lb, matrix ub, double epsilon, int Nmax, matrix ud1, matrix ud2)
 {
@@ -37,47 +37,52 @@ solution expansion(matrix(*ff)(matrix, matrix, matrix), double x0, double d, dou
 		solution interval;
 		interval.x = matrix(2, 1);
 		int i = 0;
-		double x1 = x0 + d;
+		solution X0 = x0;
+		solution X1 = X0.x + d;
 
-		if (ff(x1, ud1, ud2) == ff(x0, ud1, ud2))
+		if (X1.fit_fun(ff) == X0.fit_fun(ff))
 		{
-			interval.x(0, 0) = x0;
-			interval.x(1, 0) = x1;
+			interval.x(0, 0) = X0.x(0);
+			interval.x(1, 0) = X1.x(0);
 			return interval;
 		}
 
-		if (ff(x1, ud1, ud2) > ff(x0, ud1, ud2))
+		if (X1.fit_fun(ff) > X0.fit_fun(ff))
 		{
 			d = -d;
-			x1 = x0 + d;
-			if (ff(x1, ud1, ud2) >= ff(x0, ud1, ud2))
+			X1 = X0.x + d;
+			if (X1.fit_fun(ff) >= X0.fit_fun(ff))
 			{
-				interval.x(0, 0) = x1;
-				interval.x(1, 0) = x0 - d;
+				interval.x(0, 0) = X1.x(0);
+				interval.x(1, 0) = X0.x(0) - d;
 				return interval;
 			}
 		}
-		double xPre, xi=x0;
+
+		solution xPre;
+
 		while (true)
 		{
 			if (i >= Nmax) throw "Maximum number of function calls exceeded";
 
 			i++;
+			xPre = X0;
+			X0 = X1;
+			X1.x(0) = X0.x(0) + pow(alpha, i) * d;
 
-			double xi = x0 + pow(alpha, i) * d;
-			if (ff(x0 + pow(alpha, i - 1) * d, ud1, ud2) <= ff(xi, ud1, ud2))
+			if (X0.fit_fun(ff) <= X1.fit_fun(ff))
 				break;
 		}
 
 		if (d > 0)
 		{
-			interval.x(0, 0) = x0 + pow(alpha, i - 2) * d;
-			interval.x(1, 0) = x0 + pow(alpha, i + 1) * d;
+			interval.x(0, 0) = xPre.x(0);
+			interval.x(1, 0) = X1.x(0);
 		}
 		else
 		{
-			interval.x(0, 0) = x0 + pow(alpha, i + 1) * d;
-			interval.x(1, 0) = x0 + pow(alpha, i - 2) * d;
+			interval.x(0, 0) = X1.x(0);
+			interval.x(1, 0) = xPre.x(0);
 		}
 
 		return interval;
@@ -93,8 +98,47 @@ solution fib(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 	try
 	{
 		solution Xopt;
-		//Tu wpisz kod funkcji
+		int k = 2; 
+		double fibKMinus2 = 1; 
+		double fibKMinus1 = 1; 
+		double fibK = fibKMinus2 + fibKMinus1;
 
+		while (fibK <= (b - a) / epsilon)
+		{
+			fibKMinus2 = fibKMinus1;
+			fibKMinus1 = fibK;
+			fibK = fibKMinus1 + fibKMinus2;
+			k++;
+		}
+
+		solution A0 = a;
+		solution B0 = b;
+		solution C0 = b - (fibKMinus1 / fibK) * (b - a);
+		solution D0 = a + b - C0.x(0);
+		solution A1, B1, C1, D1;
+
+		for (int i = 0; i <= k - 3; i++)
+		{
+			if (C0.fit_fun(ff) < D0.fit_fun(ff))
+			{
+				A1 = A0; 
+				B1 = D0; 
+			}
+			else
+			{
+				B1 = B0; 
+				A1 = C0; 
+			}
+			
+			C1 = B0.x(0) - (fibKMinus2 / fibKMinus1) * (B0.x(0) - A1.x(0));
+			D1 = A1.x + B1.x - C1.x;
+
+			fibK = fibKMinus1;
+			fibKMinus1 = fibKMinus2;
+			fibKMinus2 = fibK - fibKMinus1;
+		}
+
+		Xopt = C1; 
 		return Xopt;
 	}
 	catch (string ex_info)
@@ -109,9 +153,80 @@ solution lag(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 	try
 	{
 		solution Xopt;
-		//Tu wpisz kod funkcji
+		solution A0 = a;
+		solution B0 = b;
+		solution C0 = 0.5 * (A0.x + B0.x);
+		solution D0;
+		solution A1, B1, C1, D1;
+		solution l, m;
+		int i = 0;
 
-		return Xopt;
+		while (true)
+		{
+			if (i > Nmax)
+				throw "Maximum number of function calls exceeded";
+
+			l = A0.fit_fun(ff) * (pow(B0.x, 2) - pow(C0.x, 2)) +
+				B0.fit_fun(ff) * (pow(C0.x, 2) - pow(A0.x, 2)) +
+				C0.fit_fun(ff) * (pow(A0.x, 2) - pow(B0.x, 2));
+
+			m = A0.fit_fun(ff) * (B0.x - C0.x) +
+				B0.fit_fun(ff) * (C0.x - A0.x) +
+				C0.fit_fun(ff) * (A0.x - B0.x);
+
+			if (m.x <= 0)
+				throw "Error: m is less than or equal to zero, cannot proceed";
+
+			D0 = 0.5 * l.x / m.x;
+
+			if (A0.x < D0.x && D0.x < C0.x)
+			{
+				if (D0.fit_fun(ff) < C0.fit_fun(ff))
+				{
+					A1 = A0;
+					B1 = C0;
+					C1 = D0;
+				}
+				else
+				{
+					A1 = D0;
+					C1 = C0;
+					B1 = B0;
+				}
+			}
+			else if (C0.x < D0.x && D0.x < B0.x)
+			{
+				if (D0.fit_fun(ff) < C0.fit_fun(ff))
+				{
+					A1 = C0;
+					C1 = D0;
+					B1 = B0;
+				}
+				else
+				{
+					A1 = A0;
+					C1 = C0;
+					B1 = D0;
+				}
+			}
+			else
+			{
+				throw "Error: D(i) is out of bounds";
+			}
+
+			if ((B0.x - A0.x < epsilon) || (fabs(D0.x(0) - D1.x(0)) < gamma))
+				break;
+
+			A0 = A1;
+			B0 = B1;
+			C0 = C1;
+			D1 = D0;
+
+			i++;
+		}
+
+		Xopt = D0;
+		return Xopt;	
 	}
 	catch (string ex_info)
 	{

@@ -68,15 +68,32 @@ void lab0()
 
 void lab1()
 {
+	double epsilon = 0.00001;
+	double gamma = 0.00001;
 	int Nmax = 100;
 	double alpha = 1.5;
 	double alpha2 = 3;
 	double alpha3 = 5.5;
 	double x0 = 70.0;
 	double d = 0.5;
-	solution exp = expansion(ff1T, x0, d, alpha, Nmax);
-	cout << exp;
 
+	solution exp = expansion(ff1T, x0, d, alpha, Nmax);
+	matrix interval = exp.x;
+	double a = interval(0, 0);
+	double b = interval(1, 0);
+	cout << "Interval of expansion: [" << a << "; " << b << "]" << endl 
+		 << "f_calls = " << solution::f_calls << endl << endl;
+	solution::clear_calls();
+
+	solution fibbonacci = fib(ff1T, a, b, epsilon);
+	cout << "Fibbonacci result : " << fibbonacci << endl;
+	solution::clear_calls();
+
+	solution lagrange = lag(ff1T, a, b, epsilon, gamma, Nmax);
+	cout << "Lagrange result : " << lagrange;
+	solution::clear_calls();
+
+	//Zapis do pliku csv
 
 }
 
