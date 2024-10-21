@@ -162,7 +162,7 @@ solution lag(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 		solution l, m;
 		int i = 0;
 
-		while (true)
+		do
 		{
 			if (i > Nmax)
 				throw "Maximum number of function calls exceeded";
@@ -183,37 +183,31 @@ solution lag(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 				return Xopt;
 			}
 				
-
+			D1 = D0;
 			D0 = 0.5 * l.x / m.x;
 
 			if (A0.x < D0.x && D0.x < C0.x)
 			{
 				if (D0.fit_fun(ff) < C0.fit_fun(ff))
 				{
-					A1 = A0;
-					B1 = C0;
-					C1 = D0;
+					B0 = C0;
+					C0 = D0;
 				}
 				else
 				{
-					A1 = D0;
-					C1 = C0;
-					B1 = B0;
+					A0 = D0;
 				}
 			}
 			else if (C0.x < D0.x && D0.x < B0.x)
 			{
 				if (D0.fit_fun(ff) < C0.fit_fun(ff))
 				{
-					A1 = C0;
-					C1 = D0;
-					B1 = B0;
+					A0 = C0;
+					C0 = D0;
 				}
 				else
 				{
-					A1 = A0;
-					C1 = C0;
-					B1 = D0;
+					B0 = D0;
 				}
 			}
 			else
@@ -222,18 +216,11 @@ solution lag(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 				Xopt.y(0) = -94.0;
 				Xopt.f_calls = 94;
 				return Xopt;
-			}
-
-			if ((B0.x - A0.x < epsilon) || (fabs(D0.x(0) - D1.x(0)) < gamma))
-				break;
-			
-			A0 = A1;
-			B0 = B1;
-			C0 = C1;
-			D1 = D0;			
-
+			} 
+					
 			i++;
-		}
+
+		} while ((B0.x - A0.x < epsilon) || (fabs(D0.x(0) - D1.x(0)) < gamma));
 
 		Xopt = D0;
 		return Xopt;	

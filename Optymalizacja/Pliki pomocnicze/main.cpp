@@ -88,8 +88,8 @@ void lab1()
 
     for (int j = 0; j < 100; ++j)
     {
-		std::random_device rd; // Seed generator
-		std::mt19937 gen(rd()); // Standard mersenne_twister_engine
+		std::random_device rd;
+		std::mt19937 gen(rd());
 		std::uniform_real_distribution<double> unif(-100.0, 100.0);
         x0 = unif(gen);
 
