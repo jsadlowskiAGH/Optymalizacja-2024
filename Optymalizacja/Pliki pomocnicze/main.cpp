@@ -78,13 +78,13 @@ void lab1()
     double alpha2 = 3;
     double alpha3 = 5.5;
 
-    std::ofstream Sout_expansion("results_expansion.csv");
-    std::ofstream Sout_fibonacci("results_fibonacci.csv");
-    std::ofstream Sout_lagrange("results_lagrange.csv");
+    std::ofstream Sout_expansion("results_expansion3.csv");
+    std::ofstream Sout_fibonacci("results_fibonacci3.csv");
+    std::ofstream Sout_lagrange("results_lagrange3.csv");
 
-    Sout_expansion << "x0, a, b, f_calls" << std::endl;
-    Sout_fibonacci << "x, y, f_calls" << std::endl;
-    Sout_lagrange << "x, y, f_calls" << std::endl;
+    Sout_expansion << "x0; a; b; f_calls" << std::endl;
+    Sout_fibonacci << "x; y; f_calls" << std::endl;
+    Sout_lagrange << "x; y; f_calls" << std::endl;
 
     for (int j = 0; j < 100; ++j)
     {
@@ -93,20 +93,20 @@ void lab1()
 		std::uniform_real_distribution<double> unif(-100.0, 100.0);
         x0 = unif(gen);
 
-        solution exp = expansion(ff1T, x0, d, alpha, Nmax);
+        solution exp = expansion(ff1T, x0, d, alpha3, Nmax);
         matrix interval = exp.x;
         double a = interval(0, 0);
         double b = interval(1, 0);
 
-        Sout_expansion << x0 << ", " << a << ", " << b << ", " << solution::f_calls << std::endl;
+        Sout_expansion << x0 << "; " << a << "; " << b << "; " << solution::f_calls << std::endl;
         solution::clear_calls();
 
         solution fibonacci = fib(ff1T, a, b, epsilon);
-        Sout_fibonacci << fibonacci.x(0) << ", " << ff1T(fibonacci.x) << ", " << solution::f_calls << std::endl;
+        Sout_fibonacci << fibonacci.x(0) << "; " << ff1T(fibonacci.x) << solution::f_calls << std::endl;
         solution::clear_calls();
 
         solution lagrange = lag(ff1T, a, b, epsilon, gamma, Nmax);
-        Sout_lagrange << lagrange.x(0) << ", " << ff1T(lagrange.x) << ", " << solution::f_calls << std::endl;
+        Sout_lagrange << lagrange.x(0) << "; " << ff1T(lagrange.x) << solution::f_calls << std::endl;
         solution::clear_calls();
     }
 

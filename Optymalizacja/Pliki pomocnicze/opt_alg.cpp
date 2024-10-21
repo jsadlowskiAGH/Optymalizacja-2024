@@ -131,7 +131,7 @@ solution fib(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 				A1 = C0; 
 			}
 			
-			C1 = B0.x(0) - (fibKMinus2 / fibKMinus1) * (B0.x(0) - A1.x(0));
+			C1 = B1.x(0) - (fibKMinus2 / fibKMinus1) * (B1.x(0) - A1.x(0));
 			D1 = A1.x + B1.x - C1.x;
 
 			fibK = fibKMinus1;
