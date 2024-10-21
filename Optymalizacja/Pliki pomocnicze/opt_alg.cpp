@@ -166,6 +166,7 @@ solution lag(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 		{
 			if (i > Nmax)
 				throw "Maximum number of function calls exceeded";
+
 			l = A0.fit_fun(ff) * (pow(B0.x, 2) - pow(C0.x, 2)) +
 				B0.fit_fun(ff) * (pow(C0.x, 2) - pow(A0.x, 2)) +
 				C0.fit_fun(ff) * (pow(A0.x, 2) - pow(B0.x, 2));
@@ -174,7 +175,8 @@ solution lag(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 				C0.fit_fun(ff) * (A0.x - B0.x);
 
 			if (m.x <= 0)
-				throw "Error: m is less than or equal to zero, cannot proceed";
+				//throw "Error: m is less than or equal to zero, cannot proceed";
+				return Xopt;
 
 			D0 = 0.5 * l.x / m.x;
 
@@ -211,7 +213,8 @@ solution lag(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 			}
 			else
 			{
-				throw "Error: D(i) is out of bounds";
+				//throw "Error: D(i) is out of bounds";
+				return Xopt;
 			}
 
 			if ((B0.x - A0.x < epsilon) || (fabs(D0.x(0) - D1.x(0)) < gamma))
@@ -225,6 +228,7 @@ solution lag(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 		}
 
 		Xopt = D0;
+		Xopt.flag = 0;
 		return Xopt;
 	}
 
