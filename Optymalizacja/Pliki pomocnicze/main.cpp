@@ -66,81 +66,38 @@ void lab0()
 	Y[0].~matrix();
 	Y[1].~matrix();
 }
-/*
+
 void lab1()
 {
 	double epsilon = 0.00001;
 	double gamma = 0.00001;
 	int Nmax = 100;
-	double alpha = 1.5;
-	double alpha2 = 3;
-	double alpha3 = 5.5;
-	double x0 = 70.0;
+	double x0 = 70;
 	double d = 0.5;
 
-	solution exp = expansion(ff1T, x0, d, alpha, Nmax);
-	matrix interval = exp.x;
-	double a = interval(0, 0);
-	double b = interval(1, 0);
-	cout << "Interval of expansion: [" << a << "; " << b << "]" << endl 
-		 << "f_calls = " << solution::f_calls << endl << endl;
-	solution::clear_calls();
-
-	solution fibbonacci = fib(ff1T, a, b, epsilon);
-	cout << "Fibbonacci result : " << fibbonacci << endl;
-	solution::clear_calls();
-
-	solution lagrange = lag(ff1T, a, b, epsilon, gamma, Nmax);
-	cout << "Lagrange result : " << lagrange;
-	solution::clear_calls();
-
-	//Zapis do pliku csv
-	
-}
-*/
-
-void lab1()
-{
-	srand(time(0)); // U¿ywane do generowania ró¿nych losowych punktów startowych
-
-	double epsilon = 0.00001;
-	double gamma = 0.00001;
-	int Nmax = 100;
-	double x0, d = 0.5;
-
-	// Wspó³czynniki ekspansji
 	double alphas[] = { 1.5, 3, 5.5 };
 
-	// Tworzymy plik CSV, do którego zapisujemy wyniki
-	ofstream Sout("optimization_results.csv");
+	ofstream Sout("results.csv");
 	Sout << "start_x, alpha, method, result_x, result_f_calls" << endl;
 
 	for (int j = 0; j < 100; ++j)
 	{
-		// Generujemy losowy punkt startowy
-		x0 = rand() % 100 + 1;  // Losowy punkt startowy z przedzia³u [1, 100]
-
-		// Przechodzimy przez wszystkie wspó³czynniki ekspansji
 		for (int alpha_idx = 0; alpha_idx < 3; ++alpha_idx)
 		{
 			double alpha = alphas[alpha_idx];
 
-			// 1. Metoda ekspansji
 			solution exp = expansion(ff1T, x0, d, alpha, Nmax);
 			matrix interval = exp.x;
 			double a = interval(0, 0);
 			double b = interval(1, 0);
+
+			Sout << x0 << ", " << alpha << ", " << "Expansion" << ", " << "[" << a << "," << b << "]" << ", " << solution::f_calls << endl;
 			solution::clear_calls();
 
-			// Zapisanie wyniku ekspansji do pliku
-			Sout << x0 << ", " << alpha << ", " << "Expansion" << ", " << "[" << a << "," << b << "]" << ", " << solution::f_calls << endl;
-
-			// 2. Optymalizacja metod¹ Fibonacciego
 			solution fibbonacci = fib(ff1T, a, b, epsilon);
 			Sout << x0 << ", " << alpha << ", " << "Fibonacci" << ", " << fibbonacci.x(0) << ", " << solution::f_calls << endl;
 			solution::clear_calls();
 
-			// 3. Optymalizacja metod¹ Lagrange'a
 			solution lagrange = lag(ff1T, a, b, epsilon, gamma, Nmax);
 			Sout << x0 << ", " << alpha << ", " << "Lagrange" << ", " << lagrange.x(0) << ", " << solution::f_calls << endl;
 			solution::clear_calls();
