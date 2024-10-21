@@ -1,4 +1,5 @@
 ﻿#include"opt_alg.h"
+#include <cmath>
 
 solution MC(matrix(*ff)(matrix, matrix, matrix), int N, matrix lb, matrix ub, double epsilon, int Nmax, matrix ud1, matrix ud2)
 {
@@ -174,9 +175,14 @@ solution lag(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 				B0.fit_fun(ff) * (C0.x - A0.x) +
 				C0.fit_fun(ff) * (A0.x - B0.x);
 
-			if (m.x <= 0)
-				//throw "Error: m is less than or equal to zero, cannot proceed";
+			if (m.x <= 0) 
+			{
+				Xopt.x(0) = -94.0;
+				Xopt.y(0) = -94.0;
+				Xopt.f_calls = 94;
 				return Xopt;
+			}
+				
 
 			D0 = 0.5 * l.x / m.x;
 
@@ -212,17 +218,19 @@ solution lag(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 			}
 			else
 			{
-				//throw "Error: D(i) is out of bounds";
+				Xopt.x(0) = -94.0;
+				Xopt.y(0) = -94.0;
+				Xopt.f_calls = 94;
 				return Xopt;
 			}
 
 			if ((B0.x - A0.x < epsilon) || (fabs(D0.x(0) - D1.x(0)) < gamma))
 				break;
-
+			
 			A0 = A1;
 			B0 = B1;
 			C0 = C1;
-			D1 = D0;
+			D1 = D0;			
 
 			i++;
 		}

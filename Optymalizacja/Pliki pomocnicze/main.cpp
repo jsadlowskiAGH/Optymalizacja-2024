@@ -88,10 +88,10 @@ void lab1()
 
     for (int j = 0; j < 100; ++j)
     {
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<> distr(-100.0, 100.0);
-        x0 = distr(gen);
+		std::random_device rd; // Seed generator
+		std::mt19937 gen(rd()); // Standard mersenne_twister_engine
+		std::uniform_real_distribution<double> unif(-100.0, 100.0);
+        x0 = unif(gen);
 
         solution exp = expansion(ff1T, x0, d, alpha, Nmax);
         matrix interval = exp.x;
@@ -102,11 +102,11 @@ void lab1()
         solution::clear_calls();
 
         solution fibonacci = fib(ff1T, a, b, epsilon);
-        Sout_fibonacci << fibonacci.x(0) << ", " << fibonacci.fit_fun(ff1T) << ", " << solution::f_calls << std::endl;
+        Sout_fibonacci << fibonacci.x(0) << ", " << ff1T(fibonacci.x) << ", " << solution::f_calls << std::endl;
         solution::clear_calls();
 
         solution lagrange = lag(ff1T, a, b, epsilon, gamma, Nmax);
-        Sout_lagrange << lagrange.x(0) << ", " << lagrange.fit_fun(ff1T) << ", " << solution::f_calls << std::endl;
+        Sout_lagrange << lagrange.x(0) << ", " << ff1T(lagrange.x) << ", " << solution::f_calls << std::endl;
         solution::clear_calls();
     }
 
