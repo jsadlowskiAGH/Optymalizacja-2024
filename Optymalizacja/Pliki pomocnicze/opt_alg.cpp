@@ -158,73 +158,76 @@ solution lag(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 		solution B0 = b;
 		solution C0 = 0.5 * (A0.x + B0.x);
 		solution D0;
-		solution A1, B1, C1, D1;
+		solution D1, A1, B1, C1;
 		solution l, m;
 		int i = 0;
 
-		do
+		while (true)
 		{
 			if (i > Nmax)
 				throw "Maximum number of function calls exceeded";
-
 			l = A0.fit_fun(ff) * (pow(B0.x, 2) - pow(C0.x, 2)) +
 				B0.fit_fun(ff) * (pow(C0.x, 2) - pow(A0.x, 2)) +
 				C0.fit_fun(ff) * (pow(A0.x, 2) - pow(B0.x, 2));
-
 			m = A0.fit_fun(ff) * (B0.x - C0.x) +
 				B0.fit_fun(ff) * (C0.x - A0.x) +
 				C0.fit_fun(ff) * (A0.x - B0.x);
 
-			if (m.x <= 0) 
-			{
-				Xopt.x(0) = -94.0;
-				Xopt.y(0) = -94.0;
-				Xopt.f_calls = 94;
-				return Xopt;
-			}
-				
-			D1 = D0;
+			if (m.x <= 0)
+				throw "Error: m is less than or equal to zero, cannot proceed";
+
 			D0 = 0.5 * l.x / m.x;
 
 			if (A0.x < D0.x && D0.x < C0.x)
 			{
 				if (D0.fit_fun(ff) < C0.fit_fun(ff))
 				{
-					B0 = C0;
-					C0 = D0;
+					A1 = A0;
+					B1 = C0;
+					C1 = D0;
 				}
 				else
 				{
-					A0 = D0;
+					A1 = D0;
+					C1 = C0;
+					B1 = B0;
 				}
 			}
+
 			else if (C0.x < D0.x && D0.x < B0.x)
 			{
 				if (D0.fit_fun(ff) < C0.fit_fun(ff))
 				{
-					A0 = C0;
-					C0 = D0;
+					A1 = C0;
+					C1 = D0;
+					B1 = B0;
 				}
 				else
 				{
-					B0 = D0;
+					A1 = A0;
+					C1 = C0;
+					B1 = D0;
 				}
 			}
 			else
 			{
-				Xopt.x(0) = -94.0;
-				Xopt.y(0) = -94.0;
-				Xopt.f_calls = 94;
-				return Xopt;
-			} 
-					
-			i++;
+				throw "Error: D(i) is out of bounds";
+			}
 
-		} while ((B0.x - A0.x < epsilon) || (fabs(D0.x(0) - D1.x(0)) < gamma));
+			if ((B0.x - A0.x < epsilon) || (fabs(D0.x(0) - D1.x(0)) < gamma))
+				break;
+
+			A0 = A1;
+			B0 = B1;
+			C0 = C1;
+			D1 = D0;
+			i++;
+		}
 
 		Xopt = D0;
-		return Xopt;	
+		return Xopt;
 	}
+
 	catch (string ex_info)
 	{
 		throw ("solution lag(...):\n" + ex_info);
