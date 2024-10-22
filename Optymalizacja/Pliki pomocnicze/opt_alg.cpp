@@ -93,14 +93,9 @@ solution expansion(matrix(*ff)(matrix, matrix, matrix), double x0, double d, dou
 		throw ("solution expansion(...):\n" + ex_info);
 	}
 }
-vector<double> generateFibonacci(int n) {
-	vector<double> fib(n + 1);
-	fib[0] = 1;
-	fib[1] = 1;
-	for (int i = 2; i <= n; ++i) {
-		fib[i] = fib[i - 1] + fib[i - 2];
-	}
-	return fib;
+
+double generateFibonacci(int n) {
+	return (pow(1. + sqrt(5.), n) - pow(1. - sqrt(5.), n)) / (pow(2., n) * sqrt(5.));;
 }
 
 solution fib(matrix(*ff)(matrix, matrix, matrix), double a, double b, double epsilon, matrix ud1, matrix ud2)
@@ -109,49 +104,43 @@ solution fib(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 	{
 		solution Xopt;
 		int k = 0;
-		double fibKMinus2 = 1;
-		double fibKMinus1 = 1;
-		double fibK = fibKMinus2 + fibKMinus1;
 
-		while (fibK <= (b - a) / epsilon)
+		while (generateFibonacci(k) <= (b - a) / epsilon)
 		{
-			fibKMinus2 = fibKMinus1;
-			fibKMinus1 = fibK;
-			fibK = fibKMinus1 + fibKMinus2;
-			k++;
+			k++;			
 		}
-		vector<double> fib_sequence = generateFibonacci(k);
+
 		solution A0 = a;
 		solution B0 = b;
-		solution C0 = b - (fibKMinus1 / fibK) * (b - a);
+		solution C0 = b - (k - 1 / k) * (b - a);
 		solution D0 = a + b - C0.x(0);
 		solution A1, B1, C1, D1;
 
 		for (int i = 0; i <= k - 3; i++)
 		{
-			// Minimalizujemy |max temperatura w zbiorniku B - 50°C|
-			if ((C0.fit_fun(ff) - 50) < (D0.fit_fun(ff) - 50))
+			if (C0.fit_fun(ff) < D0.fit_fun(ff))
 			{
-				A1 = A0;
-				B1 = D0;
+				A1.x(0) = A0.x(0);
+				B1.x(0) = D0.x(0);
 			}
 			else
 			{
-				B1 = B0;
-				A1 = C0;
+				B1.x(0) = B0.x(0);
+				A1.x(0) = C0.x(0);
 			}
 
-			C1 = B1.x(0) - (fib_sequence[k - i - 2] / fib_sequence[k - i - 1]) * (B1.x(0) - A1.x(0));
-			D1 = A1.x + B1.x - C1.x;
+			C1 = B1.x(0) - (generateFibonacci(k - i - 2) / generateFibonacci(k - i - 1)) * (B1.x(0) - A1.x(0));
+			D1 = A1.x(0) + B1.x(0) - C1.x(0);
 		}
 
-		Xopt = C1;
+		Xopt.x = C1.x(0);
 		return Xopt;
 	}
 	catch (string ex_info)
 	{
 		throw ("solution fib(...):\n" + ex_info);
 	}
+
 }
 
 
@@ -206,7 +195,7 @@ solution lag(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 			}
 			else if (C0.x < D0.x && D0.x < B0.x)
 			{
-				if ((D0.fit_fun(ff) - 50) < (C0.fit_fun(ff) - 50))
+				if (D0.fit_fun(ff) < C0.fit_fun(ff))
 				{
 					A1 = C0;
 					C1 = D0;

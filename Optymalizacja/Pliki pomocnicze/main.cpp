@@ -23,6 +23,9 @@ int main()
 {
 	try
 	{
+		/*matrix temp;
+		temp = ff1R(matrix(0.00116766), NULL, NULL);
+		cout << temp(0) << endl;*/
 		lab1();
 	}
 	catch (string EX_INFO)
@@ -69,11 +72,11 @@ void lab0()
 
 void lab1()
 {
-	double epsilon = 0.0001;
-	double gamma = 0.0001;
-	int Nmax = 100;
-	double a = 1.0;
-	double b = 100.0;
+	double epsilon = 1e-8;
+	double gamma = 1e-10;
+	int Nmax = 1000;
+	double a = 0.0001;
+	double b = 0.01;
 
 	// Metoda Fibonacciego
 	solution fibonacci_solution = fib(ff1R, a, b, epsilon);
@@ -81,9 +84,12 @@ void lab1()
 	solution::clear_calls();
 
 	// Metoda Lagrange'a
+	/*
 	solution lagrange_solution = lag(ff1R, a, b, epsilon, gamma, Nmax);
 	cout << "Lagrange Solution D_A: " << lagrange_solution.x(0) << "\ny: " << ff1T(lagrange_solution.x) << "f_calls: " << solution::f_calls << endl;
 	solution::clear_calls();
+	*/
+
 }
 
 

@@ -104,6 +104,6 @@ matrix ff1R(matrix X, matrix ud1, matrix ud2) {
 			max = Y[1](i, 2);
 		}
 	}
-	//return abs(max - 50);
-	return max;
+	return abs(max - 50);
+	//return max;
 }
