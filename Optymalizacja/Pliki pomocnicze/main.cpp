@@ -24,8 +24,8 @@ int main()
 	try
 	{
 		/*matrix temp;
-		temp = ff1R(matrix(0.00116766), NULL, NULL);
-		cout << temp(0) << endl;*/
+		temp = ff1R(matrix(0.0), NULL, NULL);*/
+		
 		lab1();
 	}
 	catch (string EX_INFO)
@@ -72,24 +72,52 @@ void lab0()
 
 void lab1()
 {
-	double epsilon = 1e-8;
-	double gamma = 1e-10;
-	int Nmax = 1000;
-	double a = 0.0001;
-	double b = 0.01;
+	double epsilon = 1e-6;
+	double gamma = 1e-8;
+	int Nmax = 100;
+	double x0;
+	double d = 0.5;
+	double alpha = 1.5;
+	double alpha2 = 3;
+	double alpha3 = 5.5;
+	//double a = 0.0001;
+	//double b = 0.01;
 
+	std::ofstream Sout_fibonacci("G:/Programowanie_projekty/C++/Optymalizacja/Optymalizacja/results_fibonacci3.csv");
+
+	Sout_fibonacci << "x; y; f_calls" << std::endl;
+
+	std::mt19937 gen(42);
+	std::uniform_real_distribution<double> unif(-100.0, 100.0);
+
+	for (int j = 0; j < 100; ++j)
+	{
+		x0 = unif(gen);
+
+		solution exp = expansion(ff1T, x0, d, alpha3, Nmax);
+		matrix interval = exp.x;
+		double a = interval(0, 0);
+		double b = interval(1, 0);
+
+		solution fibonacci = fib(ff1T, a, b, epsilon);
+		Sout_fibonacci << fibonacci.x(0) << "; " << ff1T(fibonacci.x) << solution::f_calls << std::endl;
+		solution::clear_calls();
+
+		
+	}
+	/*
 	// Metoda Fibonacciego
 	solution fibonacci_solution = fib(ff1R, a, b, epsilon);
 	cout << "Fibonacci Solution D_A: " << fibonacci_solution.x(0) << "\ny: " << ff1T(fibonacci_solution.x) << "f_calls: " << solution::f_calls << endl;
 	solution::clear_calls();
 
 	// Metoda Lagrange'a
-	/*
 	solution lagrange_solution = lag(ff1R, a, b, epsilon, gamma, Nmax);
 	cout << "Lagrange Solution D_A: " << lagrange_solution.x(0) << "\ny: " << ff1T(lagrange_solution.x) << "f_calls: " << solution::f_calls << endl;
 	solution::clear_calls();
 	*/
 
+	Sout_fibonacci.close();
 }
 
 

@@ -98,7 +98,7 @@ double generateFibonacci(int n) {
 	return (pow(1. + sqrt(5.), n) - pow(1. - sqrt(5.), n)) / (pow(2., n) * sqrt(5.));;
 }
 
-solution fib(matrix(*ff)(matrix, matrix, matrix), double a, double b, double epsilon, matrix ud1, matrix ud2)
+solution fib(matrix(ff)(matrix, matrix, matrix), double a, double b, double epsilon, matrix ud1, matrix ud2)
 {
 	try
 	{
@@ -107,40 +107,37 @@ solution fib(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 
 		while (generateFibonacci(k) <= (b - a) / epsilon)
 		{
-			k++;			
+			k++;
 		}
 
 		solution A0 = a;
 		solution B0 = b;
-		solution C0 = b - (k - 1 / k) * (b - a);
-		solution D0 = a + b - C0.x(0);
-		solution A1, B1, C1, D1;
+		solution C0, D0;
+		C0.x(0) = B0.x(0) - (generateFibonacci(k - 1) / generateFibonacci(k)) * (B0.x(0) - A0.x(0));
+		D0.x(0) = A0.x(0) + B0.x(0) - C0.x(0);
 
-		for (int i = 0; i <= k - 3; i++)
+		for (int i = 0; i < k - 3; i++)
 		{
 			if (C0.fit_fun(ff) < D0.fit_fun(ff))
 			{
-				A1.x(0) = A0.x(0);
-				B1.x(0) = D0.x(0);
+				B0.x(0) = D0.x(0);
 			}
 			else
 			{
-				B1.x(0) = B0.x(0);
-				A1.x(0) = C0.x(0);
+				A0.x(0) = C0.x(0);
 			}
 
-			C1 = B1.x(0) - (generateFibonacci(k - i - 2) / generateFibonacci(k - i - 1)) * (B1.x(0) - A1.x(0));
-			D1 = A1.x(0) + B1.x(0) - C1.x(0);
+			C0.x(0) = B0.x(0) - (generateFibonacci(k - i - 2) / generateFibonacci(k - i - 1)) * (B0.x(0) - A0.x(0));
+			D0.x(0) = A0.x(0) + B0.x(0) - C0.x(0);
 		}
 
-		Xopt.x = C1.x(0);
+		Xopt.x = C0.x(0);
 		return Xopt;
 	}
 	catch (string ex_info)
 	{
 		throw ("solution fib(...):\n" + ex_info);
 	}
-
 }
 
 

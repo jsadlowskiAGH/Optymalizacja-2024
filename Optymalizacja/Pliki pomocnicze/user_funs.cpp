@@ -87,23 +87,42 @@ matrix df1(double t, matrix Y, matrix ud1, matrix ud2) {
 	return dY;
 }
 
-
+//matrix ff1R(matrix X, matrix ud1, matrix ud2) {
+//	matrix Yi;
+//	matrix Y0 = matrix(3, new double[3] {5.0, 1.0, 20.0});
+//	// 5 - Va, 1 - Vb, 20 - Tb0
+//
+//	matrix* Y = solve_ode(df1, 0, 1, 2000, Y0, ud1, X);
+//
+//	int n = get_len(Y[0]);
+//	double max = Y[1](0, 2);
+//	for (int i = 0; i < n; i++)
+//	{
+//		if (max < Y[1](i, 2)) {
+//			max = Y[1](i, 2);
+//		}
+//	}
+//	return abs(max - 50);
+//	//return max;
+//}
 
 matrix ff1R(matrix X, matrix ud1, matrix ud2) {
 	matrix Yi;
 	matrix Y0 = matrix(3, new double[3] {5.0, 1.0, 20.0});
 	// 5 - Va, 1 - Vb, 20 - Tb0
 
-	matrix* Y = solve_ode(df1, 0, 1, 2000, Y0, ud1, X);
+	matrix* lag = solve_ode(df1, 0, 1, 2000, Y0, ud1, 0.00116775);
+	matrix* fib = solve_ode(df1, 0, 1, 2000, Y0, ud1, 0.00116724);
 
-	int n = get_len(Y[0]);
-	double max = Y[1](0, 2);
+	std::ofstream Sout_fibonacci("results_fibonacci4.csv");
+	Sout_fibonacci << "t; FVA; LVA; FVB; LVB; FTB; LTB" << std::endl;
+	int n = get_len(lag[0]);
+	double max = lag[1](0, 2);
 	for (int i = 0; i < n; i++)
 	{
-		if (max < Y[1](i, 2)) {
-			max = Y[1](i, 2);
-		}
+		Sout_fibonacci << i << "; " << fib[1](i, 0) << "; " << lag[1](i, 0) << "; " << fib[1](i, 1) << "; " << lag[1](i, 1) << "; " << fib[1](i, 2) << "; " << lag[1](i, 2) << "\n";
 	}
+	Sout_fibonacci.close();
 	return abs(max - 50);
 	//return max;
 }
