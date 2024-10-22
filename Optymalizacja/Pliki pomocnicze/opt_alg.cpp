@@ -102,14 +102,15 @@ vector<double> generateFibonacci(int n) {
 	}
 	return fib;
 }
+
 solution fib(matrix(*ff)(matrix, matrix, matrix), double a, double b, double epsilon, matrix ud1, matrix ud2)
 {
 	try
 	{
 		solution Xopt;
-		int k = 0; 
-		double fibKMinus2 = 1; 
-		double fibKMinus1 = 1; 
+		int k = 0;
+		double fibKMinus2 = 1;
+		double fibKMinus1 = 1;
 		double fibK = fibKMinus2 + fibKMinus1;
 
 		while (fibK <= (b - a) / epsilon)
@@ -128,32 +129,31 @@ solution fib(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 
 		for (int i = 0; i <= k - 3; i++)
 		{
-			if (C0.fit_fun(ff) < D0.fit_fun(ff))
+			// Minimalizujemy |max temperatura w zbiorniku B - 50°C|
+			if ((C0.fit_fun(ff) - 50) < (D0.fit_fun(ff) - 50))
 			{
-				A1 = A0; 
-				B1 = D0; 
+				A1 = A0;
+				B1 = D0;
 			}
 			else
 			{
-				B1 = B0; 
-				A1 = C0; 
+				B1 = B0;
+				A1 = C0;
 			}
-			
+
 			C1 = B1.x(0) - (fib_sequence[k - i - 2] / fib_sequence[k - i - 1]) * (B1.x(0) - A1.x(0));
 			D1 = A1.x + B1.x - C1.x;
-
-			
 		}
 
-		Xopt = C1; 
+		Xopt = C1;
 		return Xopt;
 	}
 	catch (string ex_info)
 	{
 		throw ("solution fib(...):\n" + ex_info);
 	}
-
 }
+
 
 solution lag(matrix(*ff)(matrix, matrix, matrix), double a, double b, double epsilon, double gamma, int Nmax, matrix ud1, matrix ud2)
 {
@@ -180,20 +180,18 @@ solution lag(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 				B0.fit_fun(ff) * (C0.x - A0.x) +
 				C0.fit_fun(ff) * (A0.x - B0.x);
 
-			if (m.x <= 0) 
+			if (m.x <= 0)
 			{
 				Xopt.x(0) = 666;
 				Xopt.y = 666;
 				return Xopt;
 			}
-				//throw "Error: m is less than or equal to zero, cannot proceed";
-				
 
 			D0 = 0.5 * l.x / m.x;
 
 			if (A0.x < D0.x && D0.x < C0.x)
 			{
-				if (D0.fit_fun(ff) < C0.fit_fun(ff))
+				if ((D0.fit_fun(ff) - 50) < (C0.fit_fun(ff) - 50))
 				{
 					A1 = A0;
 					B1 = C0;
@@ -206,10 +204,9 @@ solution lag(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 					B1 = B0;
 				}
 			}
-
 			else if (C0.x < D0.x && D0.x < B0.x)
 			{
-				if (D0.fit_fun(ff) < C0.fit_fun(ff))
+				if ((D0.fit_fun(ff) - 50) < (C0.fit_fun(ff) - 50))
 				{
 					A1 = C0;
 					C1 = D0;
@@ -224,7 +221,6 @@ solution lag(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 			}
 			else
 			{
-				//throw "Error: D(i) is out of bounds";
 				Xopt.x(0) = 666;
 				Xopt.y(0) = 666;
 				return Xopt;
@@ -250,6 +246,7 @@ solution lag(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 		throw ("solution lag(...):\n" + ex_info);
 	}
 }
+
 
 solution HJ(matrix(*ff)(matrix, matrix, matrix), matrix x0, double s, double alpha, double epsilon, int Nmax, matrix ud1, matrix ud2)
 {
