@@ -93,13 +93,21 @@ solution expansion(matrix(*ff)(matrix, matrix, matrix), double x0, double d, dou
 		throw ("solution expansion(...):\n" + ex_info);
 	}
 }
-
+vector<double> generateFibonacci(int n) {
+	vector<double> fib(n + 1);
+	fib[0] = 1;
+	fib[1] = 1;
+	for (int i = 2; i <= n; ++i) {
+		fib[i] = fib[i - 1] + fib[i - 2];
+	}
+	return fib;
+}
 solution fib(matrix(*ff)(matrix, matrix, matrix), double a, double b, double epsilon, matrix ud1, matrix ud2)
 {
 	try
 	{
 		solution Xopt;
-		int k = 2; 
+		int k = 0; 
 		double fibKMinus2 = 1; 
 		double fibKMinus1 = 1; 
 		double fibK = fibKMinus2 + fibKMinus1;
@@ -111,7 +119,7 @@ solution fib(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 			fibK = fibKMinus1 + fibKMinus2;
 			k++;
 		}
-
+		vector<double> fib_seq = generateFibonacci(k);
 		solution A0 = a;
 		solution B0 = b;
 		solution C0 = b - (fibKMinus1 / fibK) * (b - a);
@@ -131,12 +139,10 @@ solution fib(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 				A1 = C0; 
 			}
 			
-			C1 = B1.x(0) - (fibKMinus2 / fibKMinus1) * (B1.x(0) - A1.x(0));
+			C1 = B1.x(0) - (fib_seq[k - i - 2] / fib_seq[k - i - 1]) * (B1.x(0) - A1.x(0));
 			D1 = A1.x + B1.x - C1.x;
 
-			fibK = fibKMinus1;
-			fibKMinus1 = fibKMinus2;
-			fibKMinus2 = fibK - fibKMinus1;
+			
 		}
 
 		Xopt = C1; 
@@ -174,9 +180,14 @@ solution lag(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 				B0.fit_fun(ff) * (C0.x - A0.x) +
 				C0.fit_fun(ff) * (A0.x - B0.x);
 
-			if (m.x <= 0)
-				//throw "Error: m is less than or equal to zero, cannot proceed";
+			if (m.x <= 0) 
+			{
+				Xopt.x(0) = 666;
+				Xopt.y = 666;
 				return Xopt;
+			}
+				//throw "Error: m is less than or equal to zero, cannot proceed";
+				
 
 			D0 = 0.5 * l.x / m.x;
 
@@ -214,12 +225,14 @@ solution lag(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 			else
 			{
 				//throw "Error: D(i) is out of bounds";
+				Xopt.x(0) = 666;
+				Xopt.y(0) = 666;
 				return Xopt;
 			}
 
 			if ((B0.x - A0.x < epsilon) || (fabs(D0.x(0) - D1.x(0)) < gamma))
 				break;
-
+			D1.x(0) = D0.x(0);
 			A0 = A1;
 			B0 = B1;
 			C0 = C1;
