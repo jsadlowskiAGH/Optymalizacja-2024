@@ -119,7 +119,7 @@ solution fib(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 			fibK = fibKMinus1 + fibKMinus2;
 			k++;
 		}
-		vector<double> fib_seq = generateFibonacci(k);
+		vector<double> fib_sequence = generateFibonacci(k);
 		solution A0 = a;
 		solution B0 = b;
 		solution C0 = b - (fibKMinus1 / fibK) * (b - a);
@@ -139,7 +139,7 @@ solution fib(matrix(*ff)(matrix, matrix, matrix), double a, double b, double eps
 				A1 = C0; 
 			}
 			
-			C1 = B1.x(0) - (fib_seq[k - i - 2] / fib_seq[k - i - 1]) * (B1.x(0) - A1.x(0));
+			C1 = B1.x(0) - (fib_sequence[k - i - 2] / fib_sequence[k - i - 1]) * (B1.x(0) - A1.x(0));
 			D1 = A1.x + B1.x - C1.x;
 
 			
