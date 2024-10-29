@@ -239,8 +239,33 @@ solution HJ(matrix(*ff)(matrix, matrix, matrix), matrix x0, double s, double alp
 	try
 	{
 		solution Xopt;
-		//Tu wpisz kod funkcji
-
+		solution x = x0;
+		solution xb = x0;
+		do
+		{
+			
+			x = HJ_trial(ff, xb, s);
+			if (x.fit_fun(ff) < xb.fit_fun(ff))
+			{
+				do
+				{
+					solution tempxb = xb;
+					xb = x;
+					x = 2*xb.x - tempxb.x;
+					x = HJ_trial(ff, x, s);
+					if (solution::f_calls > Nmax)
+						throw "Maximum number of function calls exceeded";
+				} while (x.fit_fun(ff) >= xb.fit_fun(ff));
+					x = xb;
+			}
+			else
+			{
+				s = alpha * s;
+			}
+			if (solution::f_calls > Nmax)
+				throw "Maximum number of function calls exceeded";
+		} while (s < epsilon);
+			Xopt = xb;
 		return Xopt;
 	}
 	catch (string ex_info)
@@ -253,7 +278,7 @@ solution HJ_trial(matrix(*ff)(matrix, matrix, matrix), solution XB, double s, ma
 {
 	try
 	{
-		//Tu wpisz kod funkcji
+		
 
 		return XB;
 	}

@@ -42,7 +42,8 @@ matrix ff1T(matrix x, matrix ud1, matrix ud2)
 	return y;
 }
 
-matrix df1(double t, matrix Y, matrix ud1, matrix ud2) {
+matrix df1(double t, matrix Y, matrix ud1, matrix ud2) 
+{
 	// dane
 	double a = 0.98; // wsp odpowiadajacy za lepkosc cieczy
 	double b = 0.63; // wsp odpowiadajacy za zwezenie strumienia cieczy
@@ -87,7 +88,8 @@ matrix df1(double t, matrix Y, matrix ud1, matrix ud2) {
 	return dY;
 }
 
-//matrix ff1R(matrix X, matrix ud1, matrix ud2) {
+//matrix ff1R(matrix X, matrix ud1, matrix ud2) 
+// {
 //	matrix Yi;
 //	matrix Y0 = matrix(3, new double[3] {5.0, 1.0, 20.0});
 //	// 5 - Va, 1 - Vb, 20 - Tb0
@@ -106,7 +108,8 @@ matrix df1(double t, matrix Y, matrix ud1, matrix ud2) {
 //	//return max;
 //}
 
-matrix ff1R(matrix X, matrix ud1, matrix ud2) {
+matrix ff1R(matrix X, matrix ud1, matrix ud2) 
+{
 	matrix Yi;
 	matrix Y0 = matrix(3, new double[3] {5.0, 1.0, 20.0});
 	// 5 - Va, 1 - Vb, 20 - Tb0
@@ -125,4 +128,11 @@ matrix ff1R(matrix X, matrix ud1, matrix ud2) {
 	Sout_fibonacci.close();
 	return abs(max - 50);
 	//return max;
+}
+
+matrix ff2T(matrix x, matrix ud1, matrix ud2) 
+{
+	matrix y;
+	y = pow(x(0), 2) * pow(x(1), 2) - cos(2.5 * M_PI * x(0)) - cos(2.5 * M_PI * x(1)) + 2;
+	return y;
 }
