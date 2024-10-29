@@ -278,8 +278,21 @@ solution HJ_trial(matrix(*ff)(matrix, matrix, matrix), solution XB, double s, ma
 {
 	try
 	{
+		int n = get_len(XB.x);
+		for (int j = 1; j < n; j++)
+		{
+			matrix ej;
+			solution xbRight = XB.x + s;
+			solution xbLeft = XB.x - s;
+			if (xbRight.fit_fun(ff) < XB.fit_fun(ff))
+			{
+				XB = xbRight;
+			} else if (xbLeft.fit_fun(ff) < XB.fit_fun(ff))
+			{
+				XB = xbLeft;
+			}
+		}
 		
-
 		return XB;
 	}
 	catch (string ex_info)
