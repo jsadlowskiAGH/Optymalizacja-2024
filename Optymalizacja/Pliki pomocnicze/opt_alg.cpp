@@ -251,7 +251,7 @@ solution HJ(matrix(*ff)(matrix, matrix, matrix), matrix x0, double s, double alp
 				{
 					solution tempxb = xb;
 					xb = x;
-					x = 2*xb.x - tempxb.x;
+					x = 2 * xb.x - tempxb.x;
 					x = HJ_trial(ff, x, s);
 					if (solution::f_calls > Nmax)
 						throw "Maximum number of function calls exceeded";
@@ -279,15 +279,16 @@ solution HJ_trial(matrix(*ff)(matrix, matrix, matrix), solution XB, double s, ma
 	try
 	{
 		int n = get_len(XB.x);
-		for (int j = 1; j < n; j++)
+		matrix ej = ident_mat(n);
+		for (int j = 0; j < n; j++)
 		{
-			matrix ej;
-			solution xbRight = XB.x + s;
-			solution xbLeft = XB.x - s;
+			solution xbRight = XB.x + s * ej[j];
+			solution xbLeft = XB.x - s * ej[j];
 			if (xbRight.fit_fun(ff) < XB.fit_fun(ff))
 			{
 				XB = xbRight;
-			} else if (xbLeft.fit_fun(ff) < XB.fit_fun(ff))
+			}
+			else if (xbLeft.fit_fun(ff) < XB.fit_fun(ff))
 			{
 				XB = xbLeft;
 			}
@@ -306,7 +307,7 @@ solution Rosen(matrix(*ff)(matrix, matrix, matrix), matrix x0, matrix s0, double
 	try
 	{
 		solution Xopt;
-		//Tu wpisz kod funkcji
+		
 
 		return Xopt;
 	}

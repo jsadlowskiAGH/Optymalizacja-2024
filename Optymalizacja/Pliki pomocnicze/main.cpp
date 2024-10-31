@@ -23,10 +23,7 @@ int main()
 {
 	try
 	{
-		/*matrix temp;
-		temp = ff1R(matrix(0.0), NULL, NULL);*/
-		
-		lab1();
+		lab2();
 	}
 	catch (string EX_INFO)
 	{
@@ -123,7 +120,15 @@ void lab1()
 
 void lab2()
 {
+	double epsilon = 1e-6;
+	int Nmax = 100;
+	double initial_values[] = {1.0, 1.0};
+	matrix x0(2, initial_values);
+	double s = 0.1;
+	double alpha = 1.5;
 
+	solution hj = HJ(ff2T, x0, s, alpha, epsilon, Nmax);
+	cout << hj;
 }
 
 void lab3()
