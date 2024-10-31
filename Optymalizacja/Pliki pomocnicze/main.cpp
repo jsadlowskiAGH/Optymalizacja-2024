@@ -122,10 +122,10 @@ void lab2()
 {
 	double epsilon = 1e-6;
 	int Nmax = 100;
-	double initial_values[] = {1.0, 1.0};
+	double initial_values[] = {-1.0, -1.0};
 	matrix x0(2, initial_values);
 	double s = 0.1;
-	double alpha = 1.5;
+	double alpha = 0.5;
 
 	solution hj = HJ(ff2T, x0, s, alpha, epsilon, Nmax);
 	cout << hj;

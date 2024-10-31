@@ -241,9 +241,9 @@ solution HJ(matrix(*ff)(matrix, matrix, matrix), matrix x0, double s, double alp
 		solution Xopt;
 		solution x = x0;
 		solution xb = x0;
+	
 		do
 		{
-			
 			x = HJ_trial(ff, xb, s);
 			if (x.fit_fun(ff) < xb.fit_fun(ff))
 			{
@@ -282,15 +282,15 @@ solution HJ_trial(matrix(*ff)(matrix, matrix, matrix), solution XB, double s, ma
 		matrix ej = ident_mat(n);
 		for (int j = 0; j < n; j++)
 		{
-			solution xbRight = XB.x + s * ej[j];
-			solution xbLeft = XB.x - s * ej[j];
-			if (xbRight.fit_fun(ff) < XB.fit_fun(ff))
+			solution xbPlus = XB.x + s * ej[j];
+			solution xbMinus = XB.x - s * ej[j];
+			if (xbPlus.fit_fun(ff) < XB.fit_fun(ff))
 			{
-				XB = xbRight;
+				XB = xbPlus;
 			}
-			else if (xbLeft.fit_fun(ff) < XB.fit_fun(ff))
+			else if (xbMinus.fit_fun(ff) < XB.fit_fun(ff))
 			{
-				XB = xbLeft;
+				XB = xbMinus;
 			}
 		}
 		
