@@ -120,15 +120,22 @@ void lab1()
 
 void lab2()
 {
-	double epsilon = 1e-6;
-	int Nmax = 100;
-	double initial_values[] = {-1.0, -1.0};
+	double epsilon = 0.01;
+	int Nmax = 100000;
+	double initial_values[] = {-0.5, 1.0};
+	double initial_values2[] = {1.0, 1.0};
 	matrix x0(2, initial_values);
-	double s = 0.1;
+	matrix s0(2, initial_values2);
+	double s = 0.5;
 	double alpha = 0.5;
+	double alpha2 = 2.0;
+	double beta = 0.5;
 
-	solution hj = HJ(ff2T, x0, s, alpha, epsilon, Nmax);
-	cout << hj;
+	/*solution hj = HJ(ff2TTest, x0, s, alpha, epsilon, Nmax);
+	cout << hj;*/
+
+	solution rosen = Rosen(ff2TTest, x0, s0, alpha2, beta, epsilon, Nmax);
+	cout << rosen;
 }
 
 void lab3()

@@ -136,3 +136,10 @@ matrix ff2T(matrix x, matrix ud1, matrix ud2)
 	y = pow(x(0), 2) * pow(x(1), 2) - cos(2.5 * M_PI * x(0)) - cos(2.5 * M_PI * x(1)) + 2;
 	return y;
 }
+
+matrix ff2TTest(matrix x, matrix ud1, matrix ud2)
+{
+	matrix y;
+	y = 2.5 * pow(pow(x(0), 2) - x(1), 2) + pow(1 - x(0), 2);
+	return y;
+}

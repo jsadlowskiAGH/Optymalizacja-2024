@@ -240,14 +240,15 @@ solution HJ(matrix(*ff)(matrix, matrix, matrix), matrix x0, double s, double alp
 	{
 		solution Xopt;
 		solution x = x0;
-		solution xb = x0;
+		solution xb;
 	
 		do
 		{
+			xb = x;
 			x = HJ_trial(ff, xb, s);
 			if (x.fit_fun(ff) < xb.fit_fun(ff))
 			{
-				do
+				while (x.fit_fun(ff) < xb.fit_fun(ff))
 				{
 					solution tempxb = xb;
 					xb = x;
@@ -255,17 +256,19 @@ solution HJ(matrix(*ff)(matrix, matrix, matrix), matrix x0, double s, double alp
 					x = HJ_trial(ff, x, s);
 					if (solution::f_calls > Nmax)
 						throw "Maximum number of function calls exceeded";
-				} while (x.fit_fun(ff) >= xb.fit_fun(ff));
-					x = xb;
+				}
+				x = xb;
 			}
 			else
 			{
 				s = alpha * s;
 			}
+
 			if (solution::f_calls > Nmax)
 				throw "Maximum number of function calls exceeded";
-		} while (s < epsilon);
-			Xopt = xb;
+		} while (s >= epsilon);
+
+		Xopt = xb;
 		return Xopt;
 	}
 	catch (string ex_info)
@@ -280,6 +283,7 @@ solution HJ_trial(matrix(*ff)(matrix, matrix, matrix), solution XB, double s, ma
 	{
 		int n = get_len(XB.x);
 		matrix ej = ident_mat(n);
+
 		for (int j = 0; j < n; j++)
 		{
 			solution xbPlus = XB.x + s * ej[j];
@@ -302,13 +306,84 @@ solution HJ_trial(matrix(*ff)(matrix, matrix, matrix), solution XB, double s, ma
 	}
 }
 
+double max_abs(const matrix& vec) {
+	int n = get_len(vec);
+	double max_val = fabs(vec(0, 0));
+	for (int i = 1; i < n; i++) {
+		max_val = std::max(max_val, fabs(vec(i, 0)));
+	}
+	return max_val;
+}
+
+matrix diag(const matrix& vec) {
+	int n = get_len(vec);
+	matrix diag_mat(n, n);
+	for (int i = 0; i < n; i++) {
+		diag_mat(i, i) = vec(i);
+	}
+	return diag_mat;
+}
+
 solution Rosen(matrix(*ff)(matrix, matrix, matrix), matrix x0, matrix s0, double alpha, double beta, double epsilon, int Nmax, matrix ud1, matrix ud2)
 {
-	try
-	{
+	try {
 		solution Xopt;
-		
+		solution xB = x0;          // Punkt początkowy
+		matrix s = s0;              // Wektor długości kroków
+		int n = get_len(x0);        // Rozmiar problemu
+		matrix dj = ident_mat(n);   // Wektory kierunkowe d_j
+		matrix lambda(n, 1);        // Inicjalizacja lambda
+		matrix p(n, 1);             // Licznik dla kontrakcji
+		int fcalls = 0;             // Licznik wywołań funkcji celu
 
+		int i = 0;
+		do {
+			for (int j = 0; j < n; j++) {
+				matrix step = s(j) * get_col(dj, j); // Pobieramy kolumnę j z dj
+				solution xNew = xB.x + step;
+				fcalls++;
+
+				if (xNew.fit_fun(ff) < xB.fit_fun(ff)) {
+					xB.x = xB.x + step;
+					lambda(j) = lambda(j) + s(j);
+					s(j) = alpha * s(j);
+				}
+				else {
+					s(j) = -beta * s(j);
+					p(j) = p(j) + 1;
+				}
+			}
+
+			i++;
+			if (fcalls > Nmax) {
+				throw "Maximum number of function calls exceeded";
+			}
+
+			bool changeDirection = true;
+			for (int j = 0; j < n; j++) {
+				if (lambda(j) == 0 || p(j) == 0) {
+					changeDirection = false;
+					break;
+				}
+			}
+
+			if (changeDirection) {
+				matrix Q = dj * diag(lambda);  // Macierz Q z wartościami lambda
+				for (int j = 0; j < n; j++) {
+					matrix vj = get_col(Q, j);
+					for (int k = 0; k < j; k++) {
+						vj = vj - (trans(get_col(dj, k)) * vj) * get_col(dj, k);
+					}
+					dj.set_col(vj / norm(vj), j);  // Aktualizacja wektora kierunkowego
+				}
+				lambda = matrix(n, 0.0);
+				p = matrix(n, 0.0);
+				s = s0;
+			}
+
+		} while (max_abs(s) >= epsilon);  // Użycie max_abs zamiast s.begin() i s.end()
+
+		Xopt = xB;
 		return Xopt;
 	}
 	catch (string ex_info)
