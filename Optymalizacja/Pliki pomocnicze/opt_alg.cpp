@@ -328,60 +328,68 @@ solution Rosen(matrix(*ff)(matrix, matrix, matrix), matrix x0, matrix s0, double
 {
 	try {
 		solution Xopt;
-		solution xB = x0;          // Punkt początkowy
-		matrix s = s0;              // Wektor długości kroków
-		int n = get_len(x0);        // Rozmiar problemu
-		matrix dj = ident_mat(n);   // Wektory kierunkowe d_j
-		matrix lambda(n, 1);        // Inicjalizacja lambda
-		matrix p(n, 1);             // Licznik dla kontrakcji
-		int fcalls = 0;             // Licznik wywołań funkcji celu
+		solution xB = x0;          
+		matrix s = s0;              
+		int n = get_len(x0);        
+		matrix dj = ident_mat(n);   
+		matrix lambda(n, 1);        
+		matrix p(n, 1);             
 
 		int i = 0;
 		do {
-			for (int j = 0; j < n; j++) {
-				matrix step = s(j) * get_col(dj, j); // Pobieramy kolumnę j z dj
+			for (int j = 0; j < n; j++) 
+			{
+				matrix step = s(i) * get_col(dj, i); 
 				solution xNew = xB.x + step;
-				fcalls++;
 
-				if (xNew.fit_fun(ff) < xB.fit_fun(ff)) {
-					xB.x = xB.x + step;
-					lambda(j) = lambda(j) + s(j);
-					s(j) = alpha * s(j);
+				if (xNew.fit_fun(ff) < xB.fit_fun(ff)) 
+				{
+					xB = xB.x + step;
+					lambda(i) = lambda(i) + s(i);
+					s(i) = alpha * s(i);
 				}
-				else {
-					s(j) = -beta * s(j);
-					p(j) = p(j) + 1;
+				else 
+				{
+					s(i) = -beta * s(i);
+					p(i) = p(i) + 1;
 				}
 			}
 
 			i++;
-			if (fcalls > Nmax) {
+			xB = xB.x(i);
+
+			if (solution::f_calls > Nmax)
 				throw "Maximum number of function calls exceeded";
-			}
+			
 
 			bool changeDirection = true;
-			for (int j = 0; j < n; j++) {
-				if (lambda(j) == 0 || p(j) == 0) {
+			for (int j = 0; j < n; j++) 
+			{
+				if (lambda(j) == 0 || p(j) == 0) 
+				{
 					changeDirection = false;
 					break;
 				}
 			}
 
-			if (changeDirection) {
+			if (changeDirection) 
+			{
 				matrix Q = dj * diag(lambda);  // Macierz Q z wartościami lambda
-				for (int j = 0; j < n; j++) {
+				for (int j = 0; j < n; j++) 
+				{
 					matrix vj = get_col(Q, j);
-					for (int k = 0; k < j; k++) {
+					for (int k = 0; k < j; k++) 
+					{
 						vj = vj - (trans(get_col(dj, k)) * vj) * get_col(dj, k);
 					}
-					dj.set_col(vj / norm(vj), j);  // Aktualizacja wektora kierunkowego
+					dj.set_col(vj / norm(vj), j);  
 				}
 				lambda = matrix(n, 0.0);
 				p = matrix(n, 0.0);
 				s = s0;
 			}
 
-		} while (max_abs(s) >= epsilon);  // Użycie max_abs zamiast s.begin() i s.end()
+		} while (max_abs(s) >= epsilon); 
 
 		Xopt = xB;
 		return Xopt;
