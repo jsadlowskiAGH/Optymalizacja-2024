@@ -330,37 +330,32 @@ solution Rosen(matrix(*ff)(matrix, matrix, matrix), matrix x0, matrix s0, double
 		solution Xopt;
 		solution xB = x0;          
 		matrix s = s0;              
-		int n = get_len(x0);        
+		int n = get_len(x0);
 		matrix dj = ident_mat(n);   
 		matrix lambda(n, 1);        
 		matrix p(n, 1);             
 
-		int i = 0;
 		do {
 			for (int j = 0; j < n; j++) 
 			{
-				matrix step = s(i) * get_col(dj, i); 
+				matrix step = s(j) * get_col(dj, j); 
 				solution xNew = xB.x + step;
 
 				if (xNew.fit_fun(ff) < xB.fit_fun(ff)) 
 				{
-					xB = xB.x + step;
-					lambda(i) = lambda(i) + s(i);
-					s(i) = alpha * s(i);
+					xB = xNew;
+					lambda(j) = lambda(j) + s(j);
+					s(j) = alpha * s(j);
 				}
 				else 
 				{
-					s(i) = -beta * s(i);
-					p(i) = p(i) + 1;
+					s(j) = -beta * s(j);
+					p(j) = p(j) + 1;
 				}
 			}
 
-			i++;
-			xB = xB.x(i);
-
 			if (solution::f_calls > Nmax)
 				throw "Maximum number of function calls exceeded";
-			
 
 			bool changeDirection = true;
 			for (int j = 0; j < n; j++) 
@@ -374,18 +369,18 @@ solution Rosen(matrix(*ff)(matrix, matrix, matrix), matrix x0, matrix s0, double
 
 			if (changeDirection) 
 			{
-				matrix Q = dj * diag(lambda);  // Macierz Q z wartościami lambda
+				matrix Q = dj * diag(lambda);  
 				for (int j = 0; j < n; j++) 
 				{
 					matrix vj = get_col(Q, j);
 					for (int k = 0; k < j; k++) 
 					{
-						vj = vj - (trans(get_col(dj, k)) * vj) * get_col(dj, k);
+						vj = vj - (trans(get_col(Q, k)) * get_col(dj, k)) * get_col(dj, k);
 					}
 					dj.set_col(vj / norm(vj), j);  
 				}
-				lambda = matrix(n, 0.0);
-				p = matrix(n, 0.0);
+				lambda = matrix(n, 1, 0.0);
+				p = matrix(n, 1, 0.0);
 				s = s0;
 			}
 
